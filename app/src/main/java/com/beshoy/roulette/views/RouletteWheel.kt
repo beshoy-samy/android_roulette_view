@@ -62,6 +62,7 @@ internal class RouletteWheel(
     }
 
     private fun drawWheelStroke(canvas: Canvas) {
+        if(wheelStrokeWidth == ZERO_F) return
         rouletteViewPaint.strokeWidth = wheelStrokeWidth
         rouletteViewPaint.color = ContextCompat.getColor(context, wheelStrokeColorRes)
         canvas.drawCircle(
