@@ -21,7 +21,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             RouletteWheelItemModel(R.color.teal),
             RouletteWheelItemModel(R.color.white),
             RouletteWheelItemModel(R.color.navi_red),
-            RouletteWheelItemModel(R.color.yellow_gold),
             RouletteWheelItemModel(R.color.navi_green)
         )
 

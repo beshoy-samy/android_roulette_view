@@ -12,16 +12,29 @@
             android:id="@+id/roulette_wheel"
             android:layout_width="256dp"
             android:layout_height="256dp"
+            android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/yellow_gold"
+            app:strokeWidth="4dp" />
 
         <Button
             android:id="@+id/draw_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="draw"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toTopOf="@id/spin_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/spin_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="spin"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
