@@ -12,6 +12,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val rouletteItems = initRouletteItems()
             binding.rouletteWheel.setRouletteWheelItems(rouletteItems)
         }
+
+        binding.spinBtn.setOnClickListener {
+            binding.rouletteWheel.spinTheWheel()
+        }
+
+        binding.resetBtn.setOnClickListener {
+            binding.rouletteWheel.reset()
+        }
     }
 
     private fun initRouletteItems(): List<RouletteWheelItemModel> =

@@ -1,18 +1,27 @@
 package com.beshoy.roulette.views
 
+import android.animation.Animator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.animation.DecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.beshoy.roulette.R
 import com.beshoy.roulette.databinding.RouletteWheelViewBinding
 import com.beshoy.roulette.models.RouletteWheelItemModel
+import timber.log.Timber
+import kotlin.random.Random
 
 class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
     ConstraintLayout(context, attributeSet) {
 
     private lateinit var binding: RouletteWheelViewBinding
     private var padding = ZERO
+    private var startingAngle = STARTING_ANGLE
+    private var lastRotation = ZERO_F
+
+    var rouletteSpinSecondsDuration = DEFAULT_SPIN_DURATION
+    var rouletteSpinSpeed = DEFAULT_SPINNING_SPEED
 
     init {
         val sidesPadding = maxOf(paddingStart, paddingEnd)
@@ -39,6 +48,14 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
                     array.getResourceId(R.styleable.RouletteWheelView_strokeColor, NONE)
                 binding.rouletteWheel.wheelStrokeColorRes = strokeColorRes
                 binding.rouletteWheel.padding = padding
+                val spinSpeed =
+                    array.getInt(R.styleable.RouletteWheelView_spinSpeed, DEFAULT_SPINNING_SPEED)
+                rouletteSpinSpeed = spinSpeed
+                val spinDuration = array.getInt(
+                    R.styleable.RouletteWheelView_spinSecondsDuration,
+                    DEFAULT_SPIN_DURATION
+                )
+                rouletteSpinSecondsDuration = spinDuration
             } finally {
                 array.recycle()
             }
@@ -48,11 +65,59 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
     fun setRouletteWheelItems(wheelItems: List<RouletteWheelItemModel>) =
         binding.rouletteWheel.setRouletteWheelItems(wheelItems)
 
+    fun spinTheWheel() {
+        val randomTarget = Random.nextInt(0, binding.rouletteWheel.rouletteWheelItems.size)
+        spinTheWheelToItem(randomTarget)
+    }
+
+    fun spinTheWheelToItem(index: Int) {
+        val targetItem = binding.rouletteWheel.rouletteWheelItems[index]
+        val targetItemCenter = targetItem.startingAngle.plus(targetItem.sweepAngle.div(2))
+        val targetRotation = startingAngle.minus(targetItemCenter)
+        Timber.i("targeting index $index with rotation of $targetRotation")
+        binding.rouletteWheel.animate()
+            .apply {
+                duration = rouletteSpinSecondsDuration.times(1000L)
+                interpolator = DecelerateInterpolator()
+                rotation(
+                    RouletteWheel.CIRCLE_SIZE.times(rouletteSpinSpeed).plus(targetRotation)
+                        .plus(lastRotation)
+                )
+                setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {}
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        binding.rouletteWheel.updateItemsAfterRotation(targetRotation)
+                        binding.rouletteWheel.clearAnimation()
+                        updateLastRotationValue(targetRotation)
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {}
+                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                })
+            }
+            .start()
+    }
+
+    private fun updateLastRotationValue(targetRotation: Float) {
+        lastRotation = lastRotation.plus(targetRotation).rem(RouletteWheel.CIRCLE_SIZE)
+    }
+
+    fun reset() {
+        binding.rouletteWheel.rotation = ZERO_F
+        lastRotation = ZERO_F
+        binding.rouletteWheel.reset()
+    }
+
     companion object {
 
         private const val ZERO = 0
         private const val ZERO_F = 0f
         private const val NONE = -1
+        private const val DEFAULT_SPIN_DURATION = 6
+        private const val DEFAULT_SPINNING_SPEED = 10
+        private const val STARTING_ANGLE = 270f
     }
 
 }

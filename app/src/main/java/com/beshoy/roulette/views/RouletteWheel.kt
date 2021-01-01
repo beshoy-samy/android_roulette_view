@@ -62,7 +62,7 @@ internal class RouletteWheel(
     }
 
     private fun drawWheelStroke(canvas: Canvas) {
-        if(wheelStrokeWidth == ZERO_F) return
+        if (wheelStrokeWidth == ZERO_F) return
         rouletteViewPaint.strokeWidth = wheelStrokeWidth
         rouletteViewPaint.color = ContextCompat.getColor(context, wheelStrokeColorRes)
         canvas.drawCircle(
@@ -102,11 +102,23 @@ internal class RouletteWheel(
             rouletteViewSize.minus(wheelStrokeWidth).minus(padding)
         )
 
+    internal fun updateItemsAfterRotation(targetRotation: Float) {
+        val rotation = if (targetRotation < 0) CIRCLE_SIZE.plus(targetRotation) else targetRotation
+        rouletteWheelItems.forEach { wheelItemModel ->
+            wheelItemModel.updateItemPropertiesAfterRotation(rotation)
+        }
+    }
+
+    internal fun reset() {
+        rouletteWheelItems.forEachIndexed { index, wheelItemModel ->
+            wheelItemModel.reset(index)
+        }
+    }
+
     companion object {
 
-        private const val CIRCLE_SIZE = 360f
+        internal const val CIRCLE_SIZE = 360f
         private const val ZERO = 0
         private const val ZERO_F = 0f
-        private const val NONE = -1
     }
 }
