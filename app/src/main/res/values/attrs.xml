@@ -10,6 +10,8 @@
         <attr name="spinBtnTitle" format="string" />
         <attr name="spinBtnColor" format="color" />
         <attr name="spinBtnTextColor" format="color" />
+        <attr name="itemTextColor" format="color" />
+        <attr name="itemTextSize" format="dimension" />
         <attr name="spinBtnSizeRatio" format="float" />
         <attr name="showItemsDividerBullet" format="boolean" />
         <attr name="itemsDividerBulletColor" format="color" />

@@ -3,7 +3,10 @@ package com.beshoy.roulette.models
 import androidx.annotation.ColorRes
 import com.beshoy.roulette.views.RouletteWheel
 
-data class RouletteWheelItemModel(@ColorRes val backgroundColor: Int) {
+data class RouletteWheelItemModel(
+    @ColorRes val backgroundColor: Int,
+    val text: String? = null
+) {
 
     internal var startingAngle = 0f
     internal var endingAngle = 0f

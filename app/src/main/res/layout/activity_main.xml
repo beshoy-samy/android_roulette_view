@@ -14,6 +14,7 @@
             android:layout_height="256dp"
             android:elevation="4dp"
             android:padding="4dp"
+            app:itemTextSize="12sp"
             app:itemsDividerBulletSize="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

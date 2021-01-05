@@ -24,18 +24,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initRouletteItems(): List<RouletteWheelItemModel> =
         listOf(
-            RouletteWheelItemModel(R.color.colorAccent),
-            RouletteWheelItemModel(R.color.purple_700),
-            RouletteWheelItemModel(R.color.teal),
-            RouletteWheelItemModel(R.color.white),
-            RouletteWheelItemModel(R.color.navi_red),
-            RouletteWheelItemModel(R.color.navi_green),
-            RouletteWheelItemModel(R.color.colorAccent),
-            RouletteWheelItemModel(R.color.purple_700),
-            RouletteWheelItemModel(R.color.teal),
-            RouletteWheelItemModel(R.color.white),
-            RouletteWheelItemModel(R.color.navi_red),
-            RouletteWheelItemModel(R.color.navi_green)
+            RouletteWheelItemModel(R.color.colorAccent, "Beshoy"),
+            RouletteWheelItemModel(R.color.purple_700, "Beshoy"),
+            RouletteWheelItemModel(R.color.teal, "Beshoy"),
+            RouletteWheelItemModel(R.color.white, "Beshoy"),
+            RouletteWheelItemModel(R.color.navi_red, "Beshoy"),
+            RouletteWheelItemModel(R.color.navi_green, "Beshoy"),
+            RouletteWheelItemModel(R.color.colorAccent, "Beshoy"),
+            RouletteWheelItemModel(R.color.purple_700, "Beshoy"),
+            RouletteWheelItemModel(R.color.teal, "Beshoy"),
+            RouletteWheelItemModel(R.color.white, "Beshoy"),
+            RouletteWheelItemModel(R.color.navi_red, "Beshoy"),
+            RouletteWheelItemModel(R.color.navi_green, "Beshoy")
         )
 
     override fun getLayoutResId(): Int = R.layout.activity_main

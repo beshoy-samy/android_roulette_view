@@ -3,6 +3,7 @@ package com.beshoy.roulette.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.os.Build
 import android.util.AttributeSet
@@ -28,8 +29,20 @@ internal class RouletteWheel(
             style = Paint.Style.STROKE
             isDither = true
         }
-    private val rouletteWheelItemPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val rouletteWheelArcsDivider = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val rouletteWheelItemPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            isDither = true
+        }
+    private val rouletteWheelArcsDivider =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            isDither = true
+        }
+    private val wheelItemTextPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            isDither = true
+        }
+    internal var wheelItemTextColor = R.color.white
+    internal var wheelItemTextSize = DEFAULT_ITEM_TEXT_SIZE
     internal var wheelStrokeWidth = ZERO_F
     internal var wheelStrokeColorRes = R.color.black
     internal var padding = ZERO
@@ -96,6 +109,7 @@ internal class RouletteWheel(
             updateRouletteWheelItemPaint(wheelItemModel)
             wheelItemModel.updateItemProperties(index, itemSweepAngle)
             drawArch(canvas, wheelItemModel)
+            drawText(canvas, wheelItemModel)
         }
     }
 
@@ -107,6 +121,16 @@ internal class RouletteWheel(
             true,
             rouletteWheelItemPaint
         )
+
+    private fun drawText(canvas: Canvas, wheelItemModel: RouletteWheelItemModel) {
+        if (wheelItemModel.text.isNullOrEmpty()) return
+        wheelItemTextPaint.color = ContextCompat.getColor(context, wheelItemTextColor)
+        wheelItemTextPaint.textSize = wheelItemTextSize
+        val textPath = Path()
+        textPath.addArc(wheelItemsRange, wheelItemModel.startingAngle, wheelItemModel.sweepAngle)
+        val textWidth = wheelItemTextPaint.measureText(wheelItemModel.text)
+        canvas.drawTextOnPath(wheelItemModel.text, textPath, 20F, 10F, wheelItemTextPaint)
+    }
 
     private fun drawWheelItemsDivider(canvas: Canvas) {
         if (showItemsDividerBullet) {
@@ -164,9 +188,10 @@ internal class RouletteWheel(
 
     companion object {
 
-        internal const val CIRCLE_SIZE = 360f
-        internal const val ITEMS_DIVIDER_BULLET_SIZE = 15f
+        internal const val CIRCLE_SIZE = 360F
+        internal const val ITEMS_DIVIDER_BULLET_SIZE = 15F
+        internal const val DEFAULT_ITEM_TEXT_SIZE = 15F
         private const val ZERO = 0
-        private const val ZERO_F = 0f
+        private const val ZERO_F = 0F
     }
 }

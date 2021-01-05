@@ -89,6 +89,15 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
                 RouletteWheel.ITEMS_DIVIDER_BULLET_SIZE
             )
         binding.rouletteWheel.itemsDividerBulletSize = itemsDividerBulletSize
+        val itemTextColor =
+            array.getResourceId(R.styleable.RouletteWheelView_itemTextColor, NONE)
+        if (itemTextColor != NONE) binding.rouletteWheel.wheelItemTextColor = itemTextColor
+        val itemTextSize =
+            array.getDimension(
+                R.styleable.RouletteWheelView_itemTextSize,
+                RouletteWheel.DEFAULT_ITEM_TEXT_SIZE
+            )
+        binding.rouletteWheel.wheelItemTextSize = itemTextSize
         val elevation =
             array.getDimension(R.styleable.RouletteWheelView_android_elevation, ZERO_F)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
