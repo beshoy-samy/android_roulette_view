@@ -5,5 +5,14 @@
         <attr name="strokeColor" format="color" />
         <attr name="spinSpeed" format="integer" />
         <attr name="spinSecondsDuration" format="integer" />
+        <attr name="android:elevation" format="dimension" />
+        <attr name="showSpinBtn" format="boolean" />
+        <attr name="spinBtnTitle" format="string" />
+        <attr name="spinBtnColor" format="color" />
+        <attr name="spinBtnTextColor" format="color" />
+        <attr name="spinBtnSizeRatio" format="float" />
+        <attr name="showItemsDividerBullet" format="boolean" />
+        <attr name="itemsDividerBulletColor" format="color" />
+        <attr name="itemsDividerBulletSize" format="dimension" />
     </declare-styleable>
 </resources>

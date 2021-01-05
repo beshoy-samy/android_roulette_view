@@ -40,5 +40,6 @@
     <dimen name="text_extra_extra">36sp</dimen>
 
     <dimen name="roulette_minimum_size">128dp</dimen>
+    <dimen name="roulette_spin_btn_size">56dp</dimen>
 
 </resources>

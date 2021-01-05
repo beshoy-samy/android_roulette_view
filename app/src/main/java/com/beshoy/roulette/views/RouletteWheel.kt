@@ -4,11 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.beshoy.roulette.R
 import com.beshoy.roulette.models.RouletteWheelItemModel
+import com.beshoy.roulette.utils.calculateCoordinatesOfArcStartingAngle
 import com.beshoy.roulette.utils.onMeasureRouletteViewSize
 
 internal class RouletteWheel(
@@ -17,7 +20,7 @@ internal class RouletteWheel(
 ) : View(context, attributes) {
 
     internal val rouletteWheelItems = mutableListOf<RouletteWheelItemModel>()
-    private var rouletteViewSize = ZERO
+    internal var rouletteViewSize = ZERO
     private var wheelItemsRange = RectF()
     private var rouletteViewCenter = ZERO_F
     private val rouletteViewPaint =
@@ -26,9 +29,13 @@ internal class RouletteWheel(
             isDither = true
         }
     private val rouletteWheelItemPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val rouletteWheelArcsDivider = Paint(Paint.ANTI_ALIAS_FLAG)
     internal var wheelStrokeWidth = ZERO_F
     internal var wheelStrokeColorRes = R.color.black
     internal var padding = ZERO
+    internal var showItemsDividerBullet = false
+    internal var itemsDividerBulletColor = R.color.black
+    internal var itemsDividerBulletSize = ITEMS_DIVIDER_BULLET_SIZE
 
     fun setRouletteWheelItems(wheelItems: List<RouletteWheelItemModel>) {
         rouletteWheelItems.clear()
@@ -41,6 +48,14 @@ internal class RouletteWheel(
         rouletteViewSize = minOf(w, h)
         wheelItemsRange = getWheelItemRange()
         rouletteViewCenter = rouletteViewSize.div(other = 2).toFloat()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && elevation > ZERO_F)
+            showElevation(elevation, rouletteViewSize, rouletteViewCenter)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun showElevation(elevation: Float, rouletteViewSize: Int, rouletteViewCenter: Float) {
+        outlineProvider =
+            RouletteWheelOutlineProvider(padding, elevation, rouletteViewSize, rouletteViewCenter)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -59,6 +74,7 @@ internal class RouletteWheel(
         super.onDraw(canvas)
         drawWheelStroke(canvas)
         drawWheelItems(canvas)
+        drawWheelItemsDivider(canvas)
     }
 
     private fun drawWheelStroke(canvas: Canvas) {
@@ -79,14 +95,44 @@ internal class RouletteWheel(
         rouletteWheelItems.forEachIndexed { index, wheelItemModel ->
             updateRouletteWheelItemPaint(wheelItemModel)
             wheelItemModel.updateItemProperties(index, itemSweepAngle)
-            canvas.drawArc(
-                wheelItemsRange,
-                wheelItemModel.startingAngle,
-                wheelItemModel.sweepAngle,
-                true,
-                rouletteWheelItemPaint
-            )
+            drawArch(canvas, wheelItemModel)
         }
+    }
+
+    private fun drawArch(canvas: Canvas, wheelItemModel: RouletteWheelItemModel) =
+        canvas.drawArc(
+            wheelItemsRange,
+            wheelItemModel.startingAngle,
+            wheelItemModel.sweepAngle,
+            true,
+            rouletteWheelItemPaint
+        )
+
+    private fun drawWheelItemsDivider(canvas: Canvas) {
+        if (showItemsDividerBullet) {
+            rouletteWheelArcsDivider.color =
+                ContextCompat.getColor(context, itemsDividerBulletColor)
+            rouletteWheelItems.forEach { wheelItemModel ->
+                drawArchDividerBullet(canvas, wheelItemModel)
+            }
+        }
+    }
+
+    private fun drawArchDividerBullet(canvas: Canvas, wheelItemModel: RouletteWheelItemModel) {
+        val radius = rouletteViewCenter
+        val coordinates =
+            calculateCoordinatesOfArcStartingAngle(
+                wheelItemModel.startingAngle,
+                radius,
+                padding,
+                wheelStrokeWidth
+            )
+        canvas.drawCircle(
+            coordinates.first,
+            coordinates.second,
+            itemsDividerBulletSize,
+            rouletteWheelArcsDivider
+        )
     }
 
     private fun updateRouletteWheelItemPaint(wheelItemModel: RouletteWheelItemModel) {
@@ -103,7 +149,8 @@ internal class RouletteWheel(
         )
 
     internal fun updateItemsAfterRotation(targetRotation: Float) {
-        val rotation = if (targetRotation < 0) CIRCLE_SIZE.plus(targetRotation) else targetRotation
+        val rotation =
+            if (targetRotation < ZERO) CIRCLE_SIZE.plus(targetRotation) else targetRotation
         rouletteWheelItems.forEach { wheelItemModel ->
             wheelItemModel.updateItemPropertiesAfterRotation(rotation)
         }
@@ -118,6 +165,7 @@ internal class RouletteWheel(
     companion object {
 
         internal const val CIRCLE_SIZE = 360f
+        internal const val ITEMS_DIVIDER_BULLET_SIZE = 15f
         private const val ZERO = 0
         private const val ZERO_F = 0f
     }

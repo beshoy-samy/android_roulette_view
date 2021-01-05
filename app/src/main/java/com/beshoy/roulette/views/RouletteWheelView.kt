@@ -2,10 +2,13 @@ package com.beshoy.roulette.views
 
 import android.animation.Animator
 import android.content.Context
+import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.animation.DecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.beshoy.roulette.R
 import com.beshoy.roulette.databinding.RouletteWheelViewBinding
 import com.beshoy.roulette.models.RouletteWheelItemModel
@@ -24,10 +27,15 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
     var rouletteSpinSpeed = DEFAULT_SPINNING_SPEED
 
     init {
+        clipToPadding = false
+        getCorrectViewPadding()
+        initView(context, attributeSet)
+    }
+
+    private fun getCorrectViewPadding() {
         val sidesPadding = maxOf(paddingStart, paddingEnd)
         val topBottomPadding = maxOf(paddingTop, paddingBottom)
         padding = maxOf(sidesPadding, topBottomPadding)
-        initView(context, attributeSet)
     }
 
     private fun initView(context: Context, attributeSet: AttributeSet) {
@@ -37,33 +45,79 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
 
     private fun bindAttributes(attributeSet: AttributeSet?) {
         attributeSet?.let {
-            val array = context.theme.obtainStyledAttributes(
-                attributeSet, R.styleable.RouletteWheelView, ZERO, ZERO
-            )
-            try {
-                val strokeWidth =
-                    array.getDimension(R.styleable.RouletteWheelView_strokeWidth, ZERO_F)
-                binding.rouletteWheel.wheelStrokeWidth = strokeWidth
-                val strokeColorRes =
-                    array.getResourceId(R.styleable.RouletteWheelView_strokeColor, NONE)
-                binding.rouletteWheel.wheelStrokeColorRes = strokeColorRes
-                binding.rouletteWheel.padding = padding
-                val spinSpeed =
-                    array.getInt(R.styleable.RouletteWheelView_spinSpeed, DEFAULT_SPINNING_SPEED)
-                rouletteSpinSpeed = spinSpeed
-                val spinDuration = array.getInt(
-                    R.styleable.RouletteWheelView_spinSecondsDuration,
-                    DEFAULT_SPIN_DURATION
+            val array =
+                context.theme.obtainStyledAttributes(
+                    attributeSet,
+                    R.styleable.RouletteWheelView,
+                    ZERO,
+                    ZERO
                 )
-                rouletteSpinSecondsDuration = spinDuration
+            try {
+                handleRouletteWheelAttributes(array)
+                handleSpinButtonAttributes(array)
             } finally {
                 array.recycle()
             }
         }
     }
 
+    private fun handleRouletteWheelAttributes(array: TypedArray) {
+        val strokeWidth =
+            array.getDimension(R.styleable.RouletteWheelView_strokeWidth, ZERO_F)
+        binding.rouletteWheel.wheelStrokeWidth = strokeWidth
+        val strokeColorRes =
+            array.getResourceId(R.styleable.RouletteWheelView_strokeColor, NONE)
+        binding.rouletteWheel.wheelStrokeColorRes = strokeColorRes
+        val spinSpeed =
+            array.getInt(R.styleable.RouletteWheelView_spinSpeed, DEFAULT_SPINNING_SPEED)
+        rouletteSpinSpeed = spinSpeed
+        val spinDuration = array.getInt(
+            R.styleable.RouletteWheelView_spinSecondsDuration,
+            DEFAULT_SPIN_DURATION
+        )
+        rouletteSpinSecondsDuration = spinDuration
+        val showItemsDividerBullet =
+            array.getBoolean(R.styleable.RouletteWheelView_showItemsDividerBullet, false)
+        binding.rouletteWheel.showItemsDividerBullet = showItemsDividerBullet
+        val itemsDividerBulletColor =
+            array.getResourceId(R.styleable.RouletteWheelView_itemsDividerBulletColor, NONE)
+        if (itemsDividerBulletColor != NONE)
+            binding.rouletteWheel.itemsDividerBulletColor = itemsDividerBulletColor
+        val itemsDividerBulletSize =
+            array.getDimension(
+                R.styleable.RouletteWheelView_itemsDividerBulletSize,
+                RouletteWheel.ITEMS_DIVIDER_BULLET_SIZE
+            )
+        binding.rouletteWheel.itemsDividerBulletSize = itemsDividerBulletSize
+        val elevation =
+            array.getDimension(R.styleable.RouletteWheelView_android_elevation, ZERO_F)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+            binding.rouletteWheel.elevation = elevation
+        binding.rouletteWheel.padding = padding
+    }
+
+    private fun handleSpinButtonAttributes(array: TypedArray) {
+        val showButton = array.getBoolean(R.styleable.RouletteWheelView_showSpinBtn, false)
+        binding.spinBtn.isVisible = showButton
+        val buttonTitleRes = array.getResourceId(R.styleable.RouletteWheelView_spinBtnTitle, NONE)
+        if (buttonTitleRes != NONE) binding.spinBtn.setText(buttonTitleRes)
+        val buttonColorRes = array.getResourceId(R.styleable.RouletteWheelView_spinBtnColor, NONE)
+        if (buttonColorRes != NONE)
+            binding.spinBtn.setBackgroundColor(ContextCompat.getColor(context, buttonColorRes))
+        val buttonTextColorRes =
+            array.getResourceId(R.styleable.RouletteWheelView_spinBtnTextColor, NONE)
+        if (buttonTextColorRes != NONE)
+            binding.spinBtn.setTextColor(ContextCompat.getColor(context, buttonTextColorRes))
+        val spinButtonSizeRatio =
+            array.getFloat(R.styleable.RouletteWheelView_spinBtnSizeRatio, SPIN_BUTTON_SIZE_RATIO)
+    }
+
     fun setRouletteWheelItems(wheelItems: List<RouletteWheelItemModel>) =
         binding.rouletteWheel.setRouletteWheelItems(wheelItems)
+
+    fun setSpinButtonClickListener(listener: OnClickListener) {
+        binding.spinBtn.setOnClickListener(listener)
+    }
 
     fun spinTheWheel() {
         val randomTarget = Random.nextInt(0, binding.rouletteWheel.rouletteWheelItems.size)
@@ -115,6 +169,7 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
         private const val ZERO = 0
         private const val ZERO_F = 0f
         private const val NONE = -1
+        private const val SPIN_BUTTON_SIZE_RATIO = 0.3F
         private const val DEFAULT_SPIN_DURATION = 6
         private const val DEFAULT_SPINNING_SPEED = 10
         private const val STARTING_ANGLE = 270f

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="circle_shape_appearance">
+        <item name="cornerSize">50%</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+    <style name="Theme.Roulette.SpinButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton.Icon">
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="shapeAppearanceOverlay">@style/circle_shape_appearance</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">@dimen/roulette_spin_btn_size</item>
+        <item name="android:layout_width">@dimen/roulette_spin_btn_size</item>
+    </style>
+</resources>

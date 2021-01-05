@@ -13,7 +13,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             binding.rouletteWheel.setRouletteWheelItems(rouletteItems)
         }
 
-        binding.spinBtn.setOnClickListener {
+        binding.rouletteWheel.setSpinButtonClickListener {
             binding.rouletteWheel.spinTheWheel()
         }
 
@@ -24,6 +24,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initRouletteItems(): List<RouletteWheelItemModel> =
         listOf(
+            RouletteWheelItemModel(R.color.colorAccent),
+            RouletteWheelItemModel(R.color.purple_700),
+            RouletteWheelItemModel(R.color.teal),
+            RouletteWheelItemModel(R.color.white),
+            RouletteWheelItemModel(R.color.navi_red),
+            RouletteWheelItemModel(R.color.navi_green),
             RouletteWheelItemModel(R.color.colorAccent),
             RouletteWheelItemModel(R.color.purple_700),
             RouletteWheelItemModel(R.color.teal),

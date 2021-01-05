@@ -53,6 +53,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/beshoy/roulette/views/RouletteWheelElevation.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/beshoy/roulette/views/RouletteWheelOutlineProvider.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/beshoy/roulette/views/RouletteWheelSectionView.kt">
           <value>
             <set />
@@ -93,6 +103,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values/styles.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/values/themes.xml">
           <value>
             <set />
@@ -109,6 +124,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../../navi-android/app/src/main/java/com/pinnavi/navi/base/BaseActivity.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../navi-android/app/src/main/java/com/pinnavi/navi/features/sheets/edit_mobile/EditMobileNumberViewModel.kt">
           <value>
             <set />
           </value>
