@@ -12,8 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.beshoy.roulette.R
 import com.beshoy.roulette.models.RouletteWheelItemModel
-import com.beshoy.roulette.utils.calculateCoordinatesOfArcStartingAngle
 import com.beshoy.roulette.utils.onMeasureRouletteViewSize
+import kotlin.math.PI
 
 internal class RouletteWheel(
     context: Context,
@@ -24,6 +24,8 @@ internal class RouletteWheel(
     internal var rouletteViewSize = ZERO
     private var wheelItemsRange = RectF()
     private var rouletteViewCenter = ZERO_F
+    private val rouletteWheelRadius: Float
+        get() = rouletteViewCenter.minus(padding).minus(wheelStrokeWidth)
     private val rouletteViewPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
@@ -97,7 +99,7 @@ internal class RouletteWheel(
         canvas.drawCircle(
             rouletteViewCenter,
             rouletteViewCenter,
-            rouletteViewCenter.minus(wheelStrokeWidth).minus(padding),
+            rouletteWheelRadius,
             rouletteViewPaint
         )
     }
@@ -108,6 +110,10 @@ internal class RouletteWheel(
         rouletteWheelItems.forEachIndexed { index, wheelItemModel ->
             updateRouletteWheelItemPaint(wheelItemModel)
             wheelItemModel.updateItemProperties(index, itemSweepAngle)
+            wheelItemModel.calculateStartingPointCoordinates(
+                rouletteViewCenter,
+                rouletteWheelRadius
+            )
             drawArch(canvas, wheelItemModel)
             drawText(canvas, wheelItemModel)
         }
@@ -128,8 +134,12 @@ internal class RouletteWheel(
         wheelItemTextPaint.textSize = wheelItemTextSize
         val textPath = Path()
         textPath.addArc(wheelItemsRange, wheelItemModel.startingAngle, wheelItemModel.sweepAngle)
-        val textWidth = wheelItemTextPaint.measureText(wheelItemModel.text)
-        canvas.drawTextOnPath(wheelItemModel.text, textPath, 20F, 10F, wheelItemTextPaint)
+        val textHalfWidth = wheelItemTextPaint.measureText(wheelItemModel.text).div(2)
+        val hOffset =
+            rouletteWheelRadius.times(PI).div(rouletteWheelItems.size).minus(textHalfWidth)
+                .toFloat()
+        val vOffset = rouletteWheelRadius.times(0.25).toFloat()
+        canvas.drawTextOnPath(wheelItemModel.text, textPath, hOffset, vOffset, wheelItemTextPaint)
     }
 
     private fun drawWheelItemsDivider(canvas: Canvas) {
@@ -143,17 +153,9 @@ internal class RouletteWheel(
     }
 
     private fun drawArchDividerBullet(canvas: Canvas, wheelItemModel: RouletteWheelItemModel) {
-        val radius = rouletteViewCenter
-        val coordinates =
-            calculateCoordinatesOfArcStartingAngle(
-                wheelItemModel.startingAngle,
-                radius,
-                padding,
-                wheelStrokeWidth
-            )
         canvas.drawCircle(
-            coordinates.first,
-            coordinates.second,
+            wheelItemModel.startingPointCoordinates.first,
+            wheelItemModel.startingPointCoordinates.second,
             itemsDividerBulletSize,
             rouletteWheelArcsDivider
         )
@@ -177,12 +179,20 @@ internal class RouletteWheel(
             if (targetRotation < ZERO) CIRCLE_SIZE.plus(targetRotation) else targetRotation
         rouletteWheelItems.forEach { wheelItemModel ->
             wheelItemModel.updateItemPropertiesAfterRotation(rotation)
+            wheelItemModel.calculateStartingPointCoordinates(
+                rouletteViewCenter,
+                rouletteWheelRadius
+            )
         }
     }
 
     internal fun reset() {
         rouletteWheelItems.forEachIndexed { index, wheelItemModel ->
             wheelItemModel.reset(index)
+            wheelItemModel.calculateStartingPointCoordinates(
+                rouletteViewCenter,
+                rouletteWheelRadius
+            )
         }
     }
 
