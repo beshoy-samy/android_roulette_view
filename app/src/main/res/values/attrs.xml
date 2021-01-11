@@ -9,6 +9,7 @@
         <attr name="showSpinBtn" format="boolean" />
         <attr name="spinBtnTitle" format="string" />
         <attr name="spinBtnColor" format="color" />
+        <attr name="spinBtnIcon" format="reference" />
         <attr name="spinBtnTextColor" format="color" />
         <attr name="itemTextColor" format="color" />
         <attr name="itemTextSize" format="dimension" />

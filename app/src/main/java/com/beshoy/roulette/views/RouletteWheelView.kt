@@ -117,6 +117,10 @@ class RouletteWheelView(context: Context, attributeSet: AttributeSet) :
             array.getResourceId(R.styleable.RouletteWheelView_spinBtnTextColor, NONE)
         if (buttonTextColorRes != NONE)
             binding.spinBtn.setTextColor(ContextCompat.getColor(context, buttonTextColorRes))
+        val buttonIconRes =
+            array.getResourceId(R.styleable.RouletteWheelView_spinBtnIcon, NONE)
+        if (buttonIconRes != NONE)
+            binding.spinBtn.setIconResource(buttonIconRes)
         val spinButtonSizeRatio =
             array.getFloat(R.styleable.RouletteWheelView_spinBtnSizeRatio, SPIN_BUTTON_SIZE_RATIO)
     }
